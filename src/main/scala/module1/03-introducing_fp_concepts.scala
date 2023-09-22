@@ -304,10 +304,10 @@ object list {
      */
     def filter(f: T => Boolean): List[T] = {
       @tailrec
-      def filterTailRecursion(currentList: List[T], acc: List[T]): List[T] = currentList match {
-        case list.::(head, tail) if (f(head)) => filterTailRecursion(tail, list.::(head, acc));
-        case list.::(_, tail) => filterTailRecursion(tail, acc);
-        case list.Nil => acc
+      def filterTailRecursion(currentList: List[T], accum: List[T]): List[T] = currentList match {
+        case list.::(head, tail) if (f(head)) => filterTailRecursion(tail, list.::(head, accum));
+        case list.::(_, tail) => filterTailRecursion(tail, accum);
+        case list.Nil => accum
       }
 
       filterTailRecursion(this, List[T]())
@@ -316,18 +316,15 @@ object list {
 
      def :::[TT >: T](that: List[TT]): List[TT] = {
       @tailrec
-      def tailRecursion(l1: List[TT], l2: List[TT], acc: List[TT]): List[TT] = l2 match {
-        case ::(head, tail) => tailRecursion(l1, tail, acc.::(head))
+      def tailRecursion(l1: List[TT], l2: List[TT], accum: List[TT]): List[TT] = l2 match {
+        case ::(head, tail) => tailRecursion(l1, tail, accum.::(head))
         case Nil => l1 match {
-          case ::(head, tail) => tailRecursion(tail, Nil, acc.::(head))
-          case Nil => acc
+          case ::(head, tail) => tailRecursion(tail, Nil, accum.::(head))
+          case Nil => accum
         }
       }
        tailRecursion(this, that, Nil).reverse
     }
-
-
-
 
     def map[B](f: T => B): List[B] = ???
 
@@ -337,23 +334,17 @@ object list {
     }
 
     @tailrec
-    final def foldLeft[B](acc: B)(op: (B, T) => B): B = this match {
-      case ::(head, tail) => tail.foldLeft(op(acc, head))(op)
-      case Nil => acc
+    final def foldLeftTailRecursion[B](accum: B)(op: (B, T) => B): B = this match {
+      case ::(head, tail) => tail.foldLeftTailRecursion(op(accum, head))(op)
+      case Nil => accum
     }
 
-    def foldLeft2 = ???
-
     def take(n: Int): List[T] = {
-      val r = this.foldLeft((0, List[T]())){ case ((i, acc), el) =>
-        if( i == n) (i, acc)
-        else (i + 1, acc.::(el))
+      val r = this.foldLeftTailRecursion((0, List[T]())){ case ((i, accum), element) =>
+        if( i == n) (i, accum) else (i + 1, accum.::(element))
       }
       r._2
     }
-
-    def drop(n: Int): List[T] = ???
-
   }
 
   val l1: List[Int] = ???
