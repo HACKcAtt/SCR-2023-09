@@ -180,7 +180,7 @@ object opt {
       case None => throw new Exception("None get")
     }
 
-    def map[B](f: T => B): Option[B] = flatMap(v => Some(f(v)))
+    //def map[B](f: T => B): Option[B] = flatMap(v => Some(f(v)))
 
     def flatMap[B](f: T => Option[B]): Option[B] = this match {
       case Some(v) => f(v)
@@ -326,7 +326,7 @@ object list {
        tailRecursion(this, that, Nil).reverse
     }
 
-    def map[B](f: T => B): List[B] = ???
+    //def map[B](f: T => B): List[B] = ???
 
     def flatMap[B](f: T => List[B]): List[B] = this match {
       case ::(head, tail) => f(head) ::: tail.flatMap(f)
